@@ -1,0 +1,6 @@
+[submodule "enternal/unbound"]
+	path = enternal/unbound
+	url = https://github.com/getlotto/unbound
+[submodule "external/unbound"]
+	path = external/unbound
+	url = https://github.com/getlotto/unbound

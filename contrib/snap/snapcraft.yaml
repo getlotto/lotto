@@ -1,0 +1,77 @@
+name: lotto
+version: 0.1.0.0
+summary: "Lotto: the secure, private, payment ecosystem https://getlotto.io"
+description: |
+    We are bringing entertainment to crytpocurrency in the upmost private way! $LOTTO is a not here to solve problems in the world. We are building a secure and private place for you to have fun and spend some time. $LOTTO platform will be used for Lottery, eSports betting and gaming battles.
+grade: devel
+confinement: strict
+
+apps:
+    lottod:
+        daemon: forking
+        command: |
+          lottod-wrapper --detach --data-dir ${SNAP_COMMON} --config-file ${SNAP_USER_DATA}/etc/lottod.conf
+        plugs:
+            - network
+            - network-bind
+    lotto-wallet-rpc:
+        command: |
+          lotto-wallet-rpc --log-file ${SNAP_USER_DATA}
+        plugs:
+            - home
+            - network
+            - network-bind
+    lotto-wallet-cli:
+        command: |
+          lotto-wallet-cli --log-file ${SNAP_USER_DATA}
+        plugs:
+            - home
+            - network
+
+parts:
+    cmake-build:
+        plugin: cmake
+        configflags:
+            - -DBDB_STATIC=1
+            - -DUPNP_STATIC=1
+            - -DBoost_USE_STATIC_LIBS=1
+            - -DBoost_USE_STATIC_RUNTIME=1
+            - -DARCH=default
+        source: .
+        build-packages:
+            - gcc
+            - pkg-config
+            - libunbound-dev
+            - libevent-dev
+            - libboost-all-dev
+            - libzmqpp-dev
+            - libzmq3-dev
+            - libsodium-dev
+            - libdb-dev
+            - libunwind-dev
+            - libminiupnpc-dev
+            - libldns-dev
+            - libexpat1-dev
+            - libreadline6-dev
+            - bison
+            - doxygen
+            - graphviz
+        stage-packages:
+            - libminiupnpc10
+            - libunbound2
+            - libunwind8
+        prime:
+            - bin
+            - usr/lib/
+            - -usr/lib/gcc
+            - -usr/share
+
+    dist-files:
+        plugin: dump
+        source: .
+        organize:
+            contrib/snap/lottod.conf: etc/lottod.conf
+            contrib/snap/lottod-wrapper: bin/lottod-wrapper
+        prime:
+            - etc
+            - bin
